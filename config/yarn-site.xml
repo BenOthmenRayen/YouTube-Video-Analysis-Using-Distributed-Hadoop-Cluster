@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+<configuration>
+  <!-- ResourceManager hostname -->
+  <property>
+    <name>yarn.resourcemanager.hostname</name>
+    <value>resourcemanager</value>
+  </property>
+  <!-- ResourceManager webapp address -->
+  <property>
+    <name>yarn.resourcemanager.webapp.address</name>
+    <value>resourcemanager:8088</value>
+  </property>
+  <property>
+    <name>yarn.nodemanager.resource.memory-mb</name>
+    <value>4096</value>
+  </property>
+  <property>
+    <name>yarn.nodemanager.resource.cpu-vcores</name>
+    <value>4</value>
+  </property>
+  <!-- Local/log dirs inside containers -->
+  <property>
+    <name>yarn.nodemanager.local-dirs</name>
+    <value>/hadoop/yarn/local</value>
+  </property>
+  <property>
+    <name>yarn.nodemanager.log-dirs</name>
+    <value>/hadoop/yarn/log</value>
+  </property>
+  <!-- Minimum allocation for containers -->
+  <property>
+    <name>yarn.scheduler.minimum-allocation-mb</name>
+    <value>512</value>
+  </property>
+  <!-- Maximum allocation for containers (80% of node memory) -->
+  <property>
+    <name>yarn.scheduler.maximum-allocation-mb</name>
+    <value>3276</value>
+  </property>
+  <!-- Enable MapReduce ApplicationMaster -->
+  <property>
+    <name>yarn.nodemanager.aux-services</name>
+    <value>mapreduce_shuffle</value>
+  </property>
+  <property>
+    <name>yarn.nodemanager.aux-services.mapreduce_shuffle.class</name>
+    <value>org.apache.hadoop.mapred.ShuffleHandler</value>
+  </property>
+  <!-- ====== ADDED: Enable log aggregation ====== -->
+  <property>
+    <name>yarn.log-aggregation-enable</name>
+    <value>true</value>
+  </property>
+  <property>
+    <name>yarn.log-aggregation.retain-seconds</name>
+    <value>604800</value> <!-- 7 days -->
+  </property>
+  <!-- ====== ADDED: Timeline service for app history ====== -->
+  <property>
+    <name>yarn.timeline-service.enabled</name>
+    <value>true</value>
+  </property>
+
+  <property>
+    <name>yarn.timeline-service.hostname</name>
+    <value>historyserver</value>
+  </property>
+  <!-- Docker containers can have issues with virtual memory limits -->
+  <property>
+    <name>yarn.nodemanager.vmem-check-enabled</name>
+    <value>false</value>
+  </property>
+  <property>
+    <name>yarn.nodemanager.pmem-check-enabled</name>
+    <value>false</value>
+  </property>
+</configuration>

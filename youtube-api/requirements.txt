@@ -1,0 +1,5 @@
+google-api-python-client==2.108.0
+yt-dlp==2023.12.30
+hdfs==2.7.0
+PyYAML==6.0.1
+requests==2.31.0

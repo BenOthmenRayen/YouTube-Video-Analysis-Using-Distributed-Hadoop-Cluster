@@ -1,0 +1,241 @@
+version: "3.8"
+
+services:
+  # =========================
+  # HDFS NameNode
+  # =========================
+  namenode:
+    image: bde2020/hadoop-namenode:2.0.0-hadoop3.2.1-java8
+    container_name: namenode
+    restart: always
+    ports:
+      - "9870:9870"
+      - "9000:9000"
+    volumes:
+      - hadoop_namenode:/hadoop/dfs/name
+      - ./config/core-site.xml:/hadoop/etc/hadoop/core-site.xml:ro
+      - ./config/hdfs-site.xml:/hadoop/etc/hadoop/hdfs-site.xml:ro
+      - ./config/yarn-site.xml:/hadoop/etc/hadoop/yarn-site.xml:ro
+      - ./config/hadoop-env.sh:/hadoop/etc/hadoop/hadoop-env.sh:ro
+      - ./config/workers:/hadoop/etc/hadoop/workers:ro
+    environment:
+      - CLUSTER_NAME=test
+    env_file:
+      - ./hadoop.env
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9870/"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    networks:
+      - hadoop
+
+  # =========================
+  # DataNodes
+  # =========================
+  datanode1:
+    image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
+    container_name: datanode1
+    restart: always
+    volumes:
+      - hadoop_datanode1:/hadoop/dfs/data
+      - ./config:/hadoop/etc/hadoop:ro
+    environment:
+      SERVICE_PRECONDITION: "namenode:9870"
+    env_file:
+      - ./hadoop.env
+    depends_on:
+      namenode:
+        condition: service_healthy
+    networks:
+      - hadoop
+
+  datanode2:
+    image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
+    container_name: datanode2
+    restart: always
+    volumes:
+      - hadoop_datanode2:/hadoop/dfs/data
+      - ./config:/hadoop/etc/hadoop:ro
+    environment:
+      SERVICE_PRECONDITION: "namenode:9870"
+    env_file:
+      - ./hadoop.env
+    depends_on:
+      namenode:
+        condition: service_healthy
+    networks:
+      - hadoop
+
+  datanode3:
+    image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
+    container_name: datanode3
+    restart: always
+    volumes:
+      - hadoop_datanode3:/hadoop/dfs/data
+      - ./config:/hadoop/etc/hadoop:ro
+    environment:
+      SERVICE_PRECONDITION: "namenode:9870"
+    env_file:
+      - ./hadoop.env
+    depends_on:
+      namenode:
+        condition: service_healthy
+    networks:
+      - hadoop
+
+  # =========================
+  # YARN ResourceManager
+  # =========================
+  resourcemanager:
+    image: bde2020/hadoop-resourcemanager:2.0.0-hadoop3.2.1-java8
+    container_name: resourcemanager
+    restart: always
+    ports:
+      - "8088:8088"
+    volumes:
+      - ./config:/hadoop/etc/hadoop:ro
+    environment:
+      SERVICE_PRECONDITION: "namenode:9000 datanode1:9864"
+    env_file:
+      - ./hadoop.env
+    depends_on:
+      namenode:
+        condition: service_healthy
+    networks:
+      - hadoop
+
+  # =========================
+  # NodeManagers
+  # =========================
+  nodemanager1:
+    image: bde2020/hadoop-nodemanager:2.0.0-hadoop3.2.1-java8
+    container_name: nodemanager1
+    restart: always
+    volumes:
+      - ./config:/hadoop/etc/hadoop:ro
+    environment:
+      SERVICE_PRECONDITION: "namenode:9000 datanode1:9864 resourcemanager:8088"
+    env_file:
+      - ./hadoop.env
+    depends_on:
+      - resourcemanager
+      - datanode1
+    networks:
+      - hadoop
+
+  nodemanager2:
+    image: bde2020/hadoop-nodemanager:2.0.0-hadoop3.2.1-java8
+    container_name: nodemanager2
+    restart: always
+    volumes:
+      - ./config:/hadoop/etc/hadoop:ro
+    environment:
+      SERVICE_PRECONDITION: "namenode:9000 datanode2:9864 resourcemanager:8088"
+    env_file:
+      - ./hadoop.env
+    depends_on:
+      - resourcemanager
+      - datanode2
+    networks:
+      - hadoop
+
+  nodemanager3:
+    image: bde2020/hadoop-nodemanager:2.0.0-hadoop3.2.1-java8
+    container_name: nodemanager3
+    restart: always
+    volumes:
+      - ./config:/hadoop/etc/hadoop:ro
+    environment:
+      SERVICE_PRECONDITION: "namenode:9000 datanode3:9864 resourcemanager:8088"
+    env_file:
+      - ./hadoop.env
+    depends_on:
+      - resourcemanager
+      - datanode3
+    networks:
+      - hadoop
+
+  # =========================
+  # History Server
+  # =========================
+  historyserver:
+    image: bde2020/hadoop-historyserver:2.0.0-hadoop3.2.1-java8
+    container_name: historyserver
+    restart: always
+    ports:
+      - "8188:8188"
+    volumes:
+      - hadoop_historyserver:/hadoop/yarn/timeline
+      - ./config:/hadoop/etc/hadoop:ro
+    environment:
+      SERVICE_PRECONDITION: "namenode:9000 datanode1:9864 resourcemanager:8088"
+    env_file:
+      - ./hadoop.env
+    depends_on:
+      - resourcemanager
+    networks:
+      - hadoop
+
+  # =========================
+  # Submit Container
+  # =========================
+  submit:
+    build:
+      context: ./submit
+    container_name: submit
+    restart: unless-stopped
+    volumes:
+      - ./submit:/app
+      - ./config:/hadoop/etc/hadoop:ro
+    depends_on:
+      namenode:
+        condition: service_healthy
+      resourcemanager:
+        condition: service_started
+    command: tail -f /dev/null
+    env_file:
+      - ./hadoop.env
+    networks:
+      - hadoop
+
+  # =========================
+  # YouTube Video Fetcher
+  # =========================
+  youtube-fetcher:
+    build:
+      context: ./youtube-api
+    container_name: youtube-fetcher
+    restart: unless-stopped
+    volumes:
+      - ./youtube-api:/app
+      - /tmp/youtube_downloads:/tmp
+    environment:
+      - YOUTUBE_API_KEY=${AIzaSyBHluThwJrFDPSHNyE5U0jt-F-FFJl0LZ4}
+    env_file:
+      - ./hadoop.env
+    depends_on:
+      namenode:
+        condition: service_healthy
+    command: python fetch_videos.py
+    networks:
+      - hadoop
+
+# =========================
+# Volumes
+# =========================
+volumes:
+  hadoop_namenode:
+  hadoop_datanode1:
+  hadoop_datanode2:
+  hadoop_datanode3:
+  hadoop_historyserver:
+  youtube_downloads:
+
+# =========================
+# Network
+# =========================
+networks:
+  hadoop:
+    driver: bridge

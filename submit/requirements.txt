@@ -1,0 +1,21 @@
+# YouTube Data Extraction
+google-api-python-client==2.108.0
+pytube==15.0.0
+youtube-dl==2021.12.17
+
+# Video Processing
+opencv-python==4.8.1.78
+opencv-python-headless==4.8.1.78
+ffmpeg-python==0.2.0
+
+# Data Processing
+pandas==2.1.4
+numpy==1.26.2
+
+# HDFS Client
+hdfs==2.7.0
+
+# Utilities
+python-dotenv==1.0.0
+requests==2.31.0
+PyYAML==6.0.1

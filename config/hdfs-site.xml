@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<configuration>
+
+    <!-- Replication factor: 3 (one copy per DataNode in your cluster) -->
+    <property>
+        <name>dfs.replication</name>
+        <value>3</value>
+    </property>
+
+    <!-- Local directories for NameNode metadata -->
+    <property>
+        <name>dfs.namenode.name.dir</name>
+        <value>file:///hadoop/dfs/name</value>
+    </property>
+
+    <!-- Local directories for DataNode data -->
+    <property>
+        <name>dfs.datanode.data.dir</name>
+        <value>file:///hadoop/dfs/data</value>
+    </property>
+
+    <!-- ====== FIXED: Changed from HTTPS_ONLY to HTTP_ONLY ====== -->
+    <!-- Use HTTP for NameNode web UI (no SSL certificates needed) -->
+    <property>
+        <name>dfs.http.policy</name>
+        <value>HTTP_ONLY</value>
+    </property>
+
+    <!-- HTTP port for NameNode web UI -->
+    <property>
+        <name>dfs.namenode.http-address</name>
+        <value>0.0.0.0:9870</value>
+    </property>
+
+    <!-- Enable WebHDFS REST API for easier file operations -->
+    <property>
+        <name>dfs.webhdfs.enabled</name>
+        <value>true</value>
+    </property>
+
+    <!-- Block size for HDFS (128MB default, good for large video files) -->
+    <property>
+        <name>dfs.blocksize</name>
+        <value>134217728</value>
+    </property>
+
+    <!-- Permissions (disable for development, enable for production) -->
+    <property>
+        <name>dfs.permissions.enabled</name>
+        <value>false</value>
+    </property>
+
+</configuration>

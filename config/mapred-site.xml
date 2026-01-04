@@ -1,0 +1,60 @@
+# Create the file
+@"
+<?xml version="1.0"?>
+<configuration>
+    <!-- MapReduce Framework -->
+    <property>
+        <name>mapreduce.framework.name</name>
+        <value>yarn</value>
+    </property>
+
+    <!-- JobHistory Server -->
+    <property>
+        <name>mapreduce.jobhistory.address</name>
+        <value>historyserver:10020</value>
+    </property>
+
+    <property>
+        <name>mapreduce.jobhistory.webapp.address</name>
+        <value>historyserver:8188</value>
+    </property>
+
+    <!-- Map/Reduce Memory Settings (for video processing) -->
+    <property>
+        <name>mapreduce.map.memory.mb</name>
+        <value>1024</value>
+    </property>
+
+    <property>
+        <name>mapreduce.reduce.memory.mb</name>
+        <value>2048</value>
+    </property>
+
+    <property>
+        <name>mapreduce.map.java.opts</name>
+        <value>-Xmx768m</value>
+    </property>
+
+    <property>
+        <name>mapreduce.reduce.java.opts</name>
+        <value>-Xmx1536m</value>
+    </property>
+
+    <!-- Intermediate Data Compression -->
+    <property>
+        <name>mapreduce.map.output.compress</name>
+        <value>true</value>
+    </property>
+
+    <property>
+        <name>mapreduce.map.output.compress.codec</name>
+        <value>org.apache.hadoop.io.compress.SnappyCodec</value>
+    </property>
+
+    <!-- Task Configuration -->
+    <property>
+        <name>mapreduce.task.timeout</name>
+        <value>1800000</value> <!-- 30 minutes for video processing -->
+    </property>
+</configuration>
+"@ | Out-File -FilePath config\mapred-site.xml -Encoding UTF8

@@ -1,0 +1,17 @@
+api_key: AIzaSyBHluThwJrFDPSHNyE5U0jt-F-FFJl0LZ4
+
+hdfs:
+  url: http://namenode:9870
+  user: root
+
+search:
+  queries:
+    - Gaza conflict
+    - Gaza humanitarian crisis
+    - Gaza news 2024
+    - Palestine Gaza
+  max_results_per_query: 10
+
+storage:
+  videos: /youtube/videos
+  metadata: /youtube/metadata
