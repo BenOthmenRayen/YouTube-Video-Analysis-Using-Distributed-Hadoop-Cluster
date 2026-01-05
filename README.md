@@ -1,6 +1,6 @@
 # YouTube Video Analysis Using Distributed Hadoop Cluster
 **Click the link below to access the complete Hadoop cluster analysis:**  
-👉 [Hadoop Cluster Report (PDF)](./Rapport-Hadoop-Cluster.pdf)
+👉 [Hadoop Cluster Report](./Rapport-Hadoop-Cluster.dox)
 
 
 
